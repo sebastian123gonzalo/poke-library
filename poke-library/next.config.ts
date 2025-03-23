@@ -1,8 +1,8 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
 
-const nextConfig: NextConfig = {
-  output: 'export', // Ensures static site generation
-  trailingSlash: true,
+const NextConfig = {
+  output: 'export', // This forces Next.js to generate static files
+  trailingSlash: true, // Ensures all routes get an index.html file
 };
 
-export default nextConfig;
+export default NextConfig;
