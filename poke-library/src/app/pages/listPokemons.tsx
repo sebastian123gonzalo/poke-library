@@ -29,7 +29,7 @@ export default function ListPokemons() {
           <div key={pokemon.id} className="bg-gray-800 p-4 rounded-lg shadow-lg flex flex-col items-center">
             <Image src={pokemon.image} alt={pokemon.name} width={80} height={80} />
             <h2 className="capitalize text-lg font-bold">{pokemon.name}</h2>
-            <button className="bg-yellow-500 px-4 py-2 rounded mt-4" onClick={() => setSelectedPokemon(pokemon)}>
+            <button className="bg-yellow-500 px-4 py-2 rounded mt-4 cursor-pointer" onClick={() => setSelectedPokemon(pokemon)}>
               Details
             </button>
           </div>

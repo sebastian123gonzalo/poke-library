@@ -47,7 +47,7 @@ export default function DetailPokemon({ id, name, image, speciesUrl, onClose }: 
             ))}
           </div>
         )}
-        <button className="w-full bg-red-500 text-white font-bold py-2 px-4 rounded mt-6 hover:bg-red-600" onClick={onClose}>
+        <button className="w-full bg-red-500 text-white font-bold py-2 px-4 rounded mt-6 hover:bg-red-600 cursor-pointer" onClick={onClose}>
           Close
         </button>
       </div>
