@@ -32,7 +32,7 @@ export default function DetailPokemon({ id, name, image, speciesUrl, onClose }: 
         <button className="absolute top-4 right-4 text-2xl text-red-500" onClick={onClose}>
           ✖
         </button>
-        <h2 className="text-2xl font-bold text-center capitalize">{name}</h2>
+        <h2 className="text-2xl font-bold text-center capitalize">Name: {name} / Id: {id}</h2>
         <img src={image} alt={name} className="w-32 h-32 mx-auto" />
 
         <h3 className="text-lg font-semibold mt-4 text-center">Evolution chain</h3>

@@ -47,7 +47,6 @@ export default function ListPokemons() {
         ))}
       </div>
 
-      {/* Modal for Pokemon Details */}
       {selectedPokemon && (
         <DetailPokemon
           id={selectedPokemon.id}
