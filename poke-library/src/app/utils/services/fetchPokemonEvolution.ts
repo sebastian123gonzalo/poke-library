@@ -1,35 +1,43 @@
 import { EvolutionChain } from "../models/evolutionChain";
 
+interface SpeciesData {
+  evolution_chain: {
+    url: string;
+  };
+}
+
+interface EvolutionData {
+  chain: EvolutionNode;
+}
+
+interface EvolutionNode {
+  species: {
+    name: string;
+    url: string;
+  };
+  evolves_to: EvolutionNode[];
+}
+
 export const fetchPokemonEvolution = async (speciesUrl: string): Promise<EvolutionChain[]> => {
-  try {
-    const speciesRes = await fetch(speciesUrl);
-    if (!speciesRes.ok) throw new Error("Failed to fetch species data");
-    
-    const speciesData = await speciesRes.json();
-    const evolutionChainUrl = speciesData.evolution_chain.url;
+  const res = await fetch(speciesUrl);
+  const data: SpeciesData = await res.json();
 
-    const evolutionRes = await fetch(evolutionChainUrl);
-    if (!evolutionRes.ok) throw new Error("Failed to fetch evolution chain");
-    
-    const evolutionData = await evolutionRes.json();
-    
-    const extractEvolutions = (chain: any): EvolutionChain[] => {
-      let evolutions: EvolutionChain[] = [];
-      if (chain) {
-        evolutions.push({
-          name: chain.species.name,
-          image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${chain.species.url.split("/").slice(-2, -1)}.png`,
-        });
-        chain.evolves_to.forEach((evolution: any) => {
-          evolutions = evolutions.concat(extractEvolutions(evolution));
-        });
-      }
-      return evolutions;
-    };
+  const evolutionChainUrl = data.evolution_chain.url;
+  const evolutionRes = await fetch(evolutionChainUrl);
+  const evolutionData: EvolutionData = await evolutionRes.json();
 
-    return extractEvolutions(evolutionData.chain);
-  } catch (error) {
-    console.error("Error fetching evolution chain:", error);
-    return [];
+  const evolutions: EvolutionChain[] = [];
+  let current: EvolutionNode | undefined = evolutionData.chain;
+
+  while (current) {
+    evolutions.push({
+      name: current.species.name,
+      image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${current.species.url.split("/").slice(-2, -1)[0]}.png`,
+    });
+
+    // Si hay más evoluciones, tomamos la primera de la lista
+    current = current.evolves_to.length > 0 ? current.evolves_to[0] : undefined;
   }
+
+  return evolutions;
 };
