@@ -1,43 +1,45 @@
 import { EvolutionChain } from "../models/evolutionChain";
 
-interface SpeciesData {
-  evolution_chain: {
-    url: string;
-  };
+interface EvolutionSpecies {
+  name: string;
+  url: string;
 }
 
-interface EvolutionData {
-  chain: EvolutionNode;
+interface EvolutionStep {
+  species: EvolutionSpecies;
+  evolves_to: EvolutionStep[];
 }
 
-interface EvolutionNode {
-  species: {
-    name: string;
-    url: string;
-  };
-  evolves_to: EvolutionNode[];
-}
+ 
+const extractEvolutions = (node: EvolutionStep, evolutions: EvolutionChain[] = []): EvolutionChain[] => {
+  if (!node) return evolutions;
 
-export const fetchPokemonEvolution = async (speciesUrl: string): Promise<EvolutionChain[]> => {
-  const res = await fetch(speciesUrl);
-  const data: SpeciesData = await res.json();
+  const id = node.species.url.split("/").slice(-2, -1)[0];
 
-  const evolutionChainUrl = data.evolution_chain.url;
-  const evolutionRes = await fetch(evolutionChainUrl);
-  const evolutionData: EvolutionData = await evolutionRes.json();
+  evolutions.push({
+    name: node.species.name,
+    image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
+  });
 
-  const evolutions: EvolutionChain[] = [];
-  let current: EvolutionNode | undefined = evolutionData.chain;
-
-  while (current) {
-    evolutions.push({
-      name: current.species.name,
-      image: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${current.species.url.split("/").slice(-2, -1)[0]}.png`,
-    });
-
-    // Si hay más evoluciones, tomamos la primera de la lista
-    current = current.evolves_to.length > 0 ? current.evolves_to[0] : undefined;
+  if (node.evolves_to.length > 0) {
+    return extractEvolutions(node.evolves_to[0], evolutions);
   }
 
   return evolutions;
+};
+ 
+export const fetchPokemonEvolution = async (speciesUrl: string): Promise<EvolutionChain[]> => {
+  try {
+    const speciesRes = await fetch(speciesUrl);
+    const speciesData = await speciesRes.json();
+
+    const evolutionChainUrl = speciesData.evolution_chain.url;
+    const evolutionRes = await fetch(evolutionChainUrl);
+    const evolutionData = await evolutionRes.json();
+
+    return extractEvolutions(evolutionData.chain);
+  } catch (error) {
+    console.error("Error fetching evolution data:", error);
+    return [];
+  }
 };
