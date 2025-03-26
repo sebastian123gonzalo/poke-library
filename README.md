@@ -20,7 +20,7 @@ Una aplicación web desarrollada con **Next.js** que muestra una lista de Pokém
 ## Instalación
 1. Clonar el repositorio:
    ```sh
-   git clone https://github.com/tu-usuario/pokedex-nextjs.git
+   git clone https://github.com/sebastian123gonzalo/poke-library.git
    cd pokedex-nextjs
    ```
 2. Instalar dependencias:
